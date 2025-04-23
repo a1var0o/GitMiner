@@ -29,7 +29,7 @@ public class CommitController {
     public Commit findById(@Parameter(description = "id of commit to be searched")
                                @PathVariable String id) throws CommitNotFoundException {
         Optional<Commit> commit = repository.findById(id);
-        if (!commit.isPresent()){
+        if (commit.isEmpty()) {
             throw new CommitNotFoundException();
         }
         return commit.get();

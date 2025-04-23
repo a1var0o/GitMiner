@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,15 +34,13 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404",
-                    content = {@Content(schema = @Schema())})
     })
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
 
     @Operation(
-            description = "Get an album by its ID",
+            description = "Get a project by its ID",
             tags = {"get"}
     )
     @ApiResponses(value = {
@@ -63,7 +60,7 @@ public class ProjectController {
     }
 
     @Operation(
-            description = "Create a new album",
+            description = "Create a new project",
             tags = {"post"}
     )
     @ApiResponses(value = {

@@ -11,6 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,16 +31,37 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @Operation(
-            description = "Get all the projects",
-            tags = {"get"}
+            description = "Get {page} pages of size {size} the projects",
+            tags = {"get", "paginated"}
     )
     @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
     })
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<Project> getAllProjects(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) String order) {
+        Page<Project> projects;
+        Pageable paging;
+        if (order != null) {
+            if (order.startsWith("-")) {
+                order = order.substring(1);
+                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, order));
+            } else {
+                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, order));
+            }
+        } else {
+            paging = PageRequest.of(page, size);
+        }
+        if (name != null) {
+            projects = projectRepository.findByName(name, paging);
+        } else {
+            projects = projectRepository.findAll(paging);
+        }
+
+        return projects.getContent();
     }
 
     @Operation(

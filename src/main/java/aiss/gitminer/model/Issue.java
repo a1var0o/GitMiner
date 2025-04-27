@@ -247,7 +247,4 @@ public class Issue {
         }
         return sb.toString();
     }
-
-
-
 }

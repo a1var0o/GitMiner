@@ -30,9 +30,9 @@ public class ProjectController {
     @Autowired
     ProjectRepository projectRepository;
 
-    @Operation(
+    @Operation(summary = "Retrieve all projects",
             description = "Get {page} pages of size {size} the projects",
-            tags = {"get", "paginated"}
+            tags = {"projects", "get", "paginated"}
     )
     @GetMapping
     @ApiResponses(value = {
@@ -64,9 +64,9 @@ public class ProjectController {
         return projects.getContent();
     }
 
-    @Operation(
-            description = "Get a project by its ID",
-            tags = {"get"}
+    @Operation(summary = "Retrieve a project",
+            description = "Get a project by its Id",
+            tags = {"projects", "get"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -75,7 +75,7 @@ public class ProjectController {
                         content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}")
-    public Project getProjectById(@Parameter(description = "id of the project to be searched", required = true)
+    public Project getProjectById(@Parameter(description = "Id of the project to be searched", required = true)
                                       @PathVariable String id) throws ProjectNotFoundException {
         Optional<Project> project = projectRepository.findById(id);
         if (!project.isPresent()) {
@@ -84,9 +84,9 @@ public class ProjectController {
         return project.get();
     }
 
-    @Operation(
-            description = "Create a new project",
-            tags = {"post"}
+    @Operation(summary = "Create a new project",
+            description = "Create a new project given the information put in the body",
+            tags = {"projects", "post"}
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",

@@ -24,7 +24,6 @@ public class Project {
     @JsonProperty("web_url")
     @NotEmpty(message = "The URL of the project cannot be empty")
     public String webUrl;
-
     @JsonProperty("commits")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "projectId")

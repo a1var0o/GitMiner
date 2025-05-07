@@ -37,7 +37,7 @@ public class ProjectController {
     @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
+                    content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")})
     })
     public List<Project> getAllProjects(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size,
@@ -100,4 +100,32 @@ public class ProjectController {
         return projectRepository.save(project);
     }
 
+    @Operation(summary = "Update a project",
+            description = "Update an existing project given the information from the body",
+            tags = {"projects", "put"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    content = {@Content(schema = @Schema())})
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    public void update(@Parameter(description = "Id of the project to be searched", required = true)
+                              @PathVariable String id,
+                       @Valid @RequestBody Project updatedProject) throws ProjectNotFoundException {
+        Optional<Project> projectData = projectRepository.findById(id);
+
+        if (!projectData.isPresent()) {
+            throw new ProjectNotFoundException();
+        }
+        Project _project = projectData.get();
+        _project.setName(updatedProject.getName());
+        _project.setWebUrl(updatedProject.getWebUrl());
+        _project.setName(updatedProject.getName());
+        _project.setCommits(updatedProject.getCommits());
+        _project.setIssues(updatedProject.getIssues());
+        projectRepository.save(_project);
+    }
 }

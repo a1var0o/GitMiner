@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -131,5 +133,19 @@ public class ProjectController {
         _project.setCommits(updatedProject.getCommits());
         _project.setIssues(updatedProject.getIssues());
         projectRepository.save(_project);
+    }
+
+    @QueryMapping
+    public List<Project> projects() {
+        return projectRepository.findAll();
+    }
+
+    @QueryMapping
+    public Project projectById(@Argument String id) throws ProjectNotFoundException {
+        Optional<Project> project = projectRepository.findById(id);
+        if (!project.isPresent()) {
+            throw new ProjectNotFoundException();
+        }
+        return project.get();
     }
 }

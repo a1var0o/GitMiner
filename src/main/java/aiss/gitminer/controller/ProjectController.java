@@ -31,26 +31,30 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     @Operation(summary = "Retrieve all projects",
-            description = "Get {page} pages of size {size} the projects",
+            description = "Get the indicated page of size {size} the projects",
             tags = {"projects", "get", "paginated"}
     )
-    @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")})
     })
-    public List<Project> getAllProjects(@RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size,
-                                        @RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String order) {
+    @GetMapping
+    public List<Project> getAllProjects(@Parameter(description = "Index of the page")
+                                            @RequestParam(defaultValue = "0") int page,
+                                        @Parameter(description = "Size of the page")
+                                            @RequestParam(defaultValue = "10") int size,
+                                        @Parameter(description = "Name of the project to retrieve")
+                                            @RequestParam(required = false) String name,
+                                        @Parameter(description = "Attribute used to sort the projects retrieved. If starts with - uses descending order")
+                                        @RequestParam(required = false) String sort) {
         Page<Project> projects;
         Pageable paging;
-        if (order != null) {
-            if (order.startsWith("-")) {
-                order = order.substring(1);
-                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, order));
+        if (sort != null) {
+            if (sort.startsWith("-")) {
+                sort = sort.substring(1);
+                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
             } else {
-                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, order));
+                paging = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort));
             }
         } else {
             paging = PageRequest.of(page, size);

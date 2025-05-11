@@ -38,26 +38,50 @@ public class IssueController {
     public List<Issue> getAllIssues(@Parameter(description = "Id of the author of which we want to retrieve the issues")
                                         @RequestParam (required = false) String authorId,
                                     @Parameter(description = "State in which the issues retrieves are. It can either be open or closed")
-                                        @RequestParam (required = false) String state) throws UserNotFoundException {
+                                        @RequestParam (required = false) String state,
+                                    @Parameter(description = "Minimum number of votes")
+                                        @RequestParam(required = false) Integer nVotes) throws UserNotFoundException {
         List<Issue> issues;
-        if (authorId != null && state != null) {
-            Optional<User> user = userRepository.findById(authorId);
-            if (user.isPresent()) {
-                issues = issueRepository.findByAuthorAndState(user.get(), state);
+        if (nVotes != null) {
+            if (authorId != null && state != null) {
+                Optional<User> user = userRepository.findById(authorId);
+                if (user.isPresent()) {
+                    issues = issueRepository.findByAuthorAndStateAndVotesGreaterThanEqual(user.get(), state, nVotes);
+                } else {
+                    throw new UserNotFoundException();
+                }
+            } else if (authorId != null) {
+                Optional<User> user = userRepository.findById(authorId);
+                if (user.isPresent()) {
+                    issues = issueRepository.findByAuthorAndVotesGreaterThanEqual(user.get(), nVotes);
+                } else {
+                    throw new UserNotFoundException();
+                }
+            } else if (state != null) {
+                issues = issueRepository.findByStateAndVotesGreaterThanEqual(state, nVotes);
             } else {
-                throw new UserNotFoundException();
+                issues = issueRepository.findByVotesGreaterThanEqual(nVotes);
             }
-        } else if (authorId != null) {
-            Optional<User> user = userRepository.findById(authorId);
-            if (user.isPresent()) {
-                issues = issueRepository.findByAuthor(user.get());
-            } else {
-                throw new UserNotFoundException();
-            }
-        } else if (state != null) {
-            issues = issueRepository.findByState(state);
         } else {
-            issues = issueRepository.findAll();
+            if (authorId != null && state != null) {
+                Optional<User> user = userRepository.findById(authorId);
+                if (user.isPresent()) {
+                    issues = issueRepository.findByAuthorAndState(user.get(), state);
+                } else {
+                    throw new UserNotFoundException();
+                }
+            } else if (authorId != null) {
+                Optional<User> user = userRepository.findById(authorId);
+                if (user.isPresent()) {
+                    issues = issueRepository.findByAuthor(user.get());
+                } else {
+                    throw new UserNotFoundException();
+                }
+            } else if (state != null) {
+                issues = issueRepository.findByState(state);
+            } else {
+                issues = issueRepository.findAll();
+            }
         }
         return issues;
     }

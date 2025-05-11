@@ -12,11 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +29,23 @@ public class CommitController {
     @Operation(summary = "Retrieve all commits", description="Get all commits", tags={"commits", "get"})
     @ApiResponse(responseCode = "200", description = "List of commits", content = { @Content(array = @ArraySchema(schema = @Schema(implementation = Commit.class)), mediaType="application/json") })
     @GetMapping
-    public List<Commit> findAll() {
-        return repository.findAll();
+    public List<Commit> findAll(@Parameter(description = "Name of the author of the commits")
+                                    @RequestParam(required = false) String authorName,
+                                @Parameter(description = "Number of days the operation will get commits from")
+                                    @RequestParam(required = false) Integer since) {
+        if (since == null) {
+            if (authorName != null) {
+                return repository.findByAuthorName(authorName);
+            } else {
+                return repository.findAll();
+            }
+        } else {
+            if (authorName != null) {
+                return repository.findByAuthorNameAndAuthoredDateGreaterThan(authorName, LocalDateTime.now().minusDays(since).toString());
+            } else {
+                return repository.findByAuthoredDateGreaterThan(LocalDateTime.now().minusDays(since).toString());
+            }
+        }
     }
 
     @Operation(summary = "Retrieve a commit by its id", description="Get commit by id", tags={"commits", "get"})

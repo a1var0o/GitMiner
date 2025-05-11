@@ -1,0 +1,55 @@
+type Query {
+    projectById(id: ID): Project,
+    projects: [Project],
+    userById(id: ID): User,
+    users: [User],
+}
+
+type Project {
+    id: ID!,
+    name: String!,
+    webUrl: String!,
+    commits: [Commit],
+    issues: [Issue]
+}
+
+type Commit {
+    id: ID!,
+    title: String!,
+    message: String!,
+    authorName: String!,
+    authorEmail: String,
+    authoredDate: String!,
+    webUrl: String!
+}
+
+type Issue {
+    id: ID!,
+    title: String,
+    description: String,
+    state: String!,
+    createdAt: String!,
+    updatedAt: String,
+    closedAt: String,
+    labels: [String],
+    author: User!,
+    assignee: User,
+    votes: Int!,
+    comments: [Comment]
+}
+
+type Comment {
+    id: ID!,
+    body: String,
+    createdAt: String!,
+    updatedAt: String,
+    author: User!
+}
+
+type User {
+    id: ID!,
+    username: String!,
+    name: String,
+    avatarUrl: String!,
+    webUrl: String!
+}

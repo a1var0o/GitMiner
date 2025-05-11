@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Commit")
@@ -32,8 +31,7 @@ public class Commit {
     private String authoredDate;
 
     @JsonProperty("web_url")
-    @NotEmpty(message = "URL cannot be empty." +
-            "")
+    @NotEmpty(message = "URL cannot be empty.")
     private String webUrl;
 
     public String getId() {
@@ -94,41 +92,14 @@ public class Commit {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Commit.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("id");
-        sb.append('=');
-        sb.append(((this.id == null) ? "<null>" : this.id));
-        sb.append(',');
-        sb.append("title");
-        sb.append('=');
-        sb.append(((this.title == null) ? "<null>" : this.title));
-        sb.append(',');
-        sb.append("message");
-        sb.append('=');
-        sb.append(((this.message == null) ? "<null>" : this.message));
-        sb.append(',');
-        sb.append("authorName");
-        sb.append('=');
-        sb.append(((this.authorName == null) ? "<null>" : this.authorName));
-        sb.append(',');
-        sb.append("authorEmail");
-        sb.append('=');
-        sb.append(((this.authorEmail == null) ? "<null>" : this.authorEmail));
-        sb.append(',');
-        sb.append("authoredDate");
-        sb.append('=');
-        sb.append(((this.authoredDate == null) ? "<null>" : this.authoredDate));
-        sb.append(',');
-        sb.append("webUrl");
-        sb.append('=');
-        sb.append(((this.webUrl == null) ? "<null>" : this.webUrl));
-        sb.append(',');
-        if (sb.charAt((sb.length() - 1)) == ',') {
-            sb.setCharAt((sb.length() - 1), ']');
-        } else {
-            sb.append(']');
-        }
-        return sb.toString();
+        return "Commit{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", authorName='" + authorName + '\'' +
+                ", authorEmail='" + authorEmail + '\'' +
+                ", authoredDate='" + authoredDate + '\'' +
+                ", webUrl='" + webUrl + '\'' +
+                '}';
     }
 }
